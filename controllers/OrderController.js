@@ -1,4 +1,5 @@
 const Order = require('../models/Order.js');
+const User = require('../models/User.js');
 
 const OrderController = {
     async create(req, res) {
@@ -9,6 +10,7 @@ const OrderController = {
         deliveryDate: new Date().setDate(new Date().getDate() + 2),
         userId: req.user._id,
       });
+      await User.findByIdAndUpdate(req.user._id, { $push: { orderIds: order._id } })
       res.status(201).send({msg:`${req.user.name} gracias por hacer tu pedido`, order});
     } catch (error) {
       console.error(error);

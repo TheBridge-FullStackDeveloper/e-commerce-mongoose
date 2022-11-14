@@ -9,5 +9,7 @@ router.get("/getById/:_id",ProductController.getById)
 router.get("/getProductsByName/:name",ProductController.getProductsByName)
 router.delete("/deleteProductById/:_id",authentication,isAdmin,ProductController.delete)
 router.put("/updateProductById/:_id",authentication,isAdmin,ProductController.update)
+router.put("/insertComment/:_id",authentication,ProductController.insertComment)
+router.put("/like/:_id",authentication, ProductController.like)
 
 module.exports = router

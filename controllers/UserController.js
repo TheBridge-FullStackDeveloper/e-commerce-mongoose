@@ -1,16 +1,16 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken")
-const {jwt_secret} = require("../config/keys")
+const jwt = require("jsonwebtoken");
+const { jwt_secret } = require("../config/keys");
 const UserController = {
-  async createUser(req, res) {
+  async createUser(req, res, next) {
     try {
       const password = await bcrypt.hash(req.body.password, 10);
-      const user = await User.create({ ...req.body, password,role:"user" });
+      const user = await User.create({ ...req.body, password, role: "user" });
       res.status(201).send(user);
     } catch (error) {
       console.error(error);
-      res.status(500).send(error);
+      next(error);
     }
   },
   async login(req, res) {
@@ -48,7 +48,21 @@ const UserController = {
       });
     }
   },
+  async getInfo(req, res) {
+    try {
+      const user = await User.findById(req.user._id).populate({
+        path: "orderIds",
+        populate: {
+          path: "productIds",
+        },
+      }).populate("wishList")
+      ;
 
+      res.send(user);
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };
 
 module.exports = UserController;
